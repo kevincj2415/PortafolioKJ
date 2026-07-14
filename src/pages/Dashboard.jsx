@@ -30,7 +30,7 @@ const TABLES = {
     fields: [
       { name: 'title', label: 'Título', type: 'text' },
       { name: 'description', label: 'Descripción', type: 'textarea' },
-      { name: 'imageUrl', label: 'URL de Imagen', type: 'text' },
+      { name: 'imageUrl', label: 'Imagen (Subir o URL)', type: 'image' },
       { name: 'githubUrl', label: 'URL de GitHub', type: 'text' },
       { name: 'webUrl', label: 'URL Web', type: 'text' },
       { name: 'technologies', label: 'Tecnologías (separadas por coma)', type: 'text', isArray: true }
@@ -263,6 +263,50 @@ const Dashboard = () => {
     }
   };
 
+  const [uploadingImage, setUploadingImage] = useState(false);
+
+  const handleImageUpload = async (e, field) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    const formDataObj = new FormData();
+    formDataObj.append('file', file);
+    
+    // El upload_preset de Cloudinary
+    const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+    
+    if (!uploadPreset) {
+      alert("Falta configurar VITE_CLOUDINARY_UPLOAD_PRESET en el archivo .env (.env.local). Debe ser un preset de subida sin firma (unsigned).");
+      setUploadingImage(false);
+      return;
+    }
+
+    formDataObj.append('upload_preset', uploadPreset);
+
+    try {
+      const res = await fetch(`https://api.cloudinary.com/v1_1/mzraxq6o/image/upload`, {
+        method: 'POST',
+        body: formDataObj
+      });
+      const data = await res.json();
+      
+      if (data.secure_url) {
+        setFormData(prev => ({
+          ...prev,
+          [field.name]: data.secure_url
+        }));
+      } else {
+        alert("Error al subir la imagen a Cloudinary: " + (data.error?.message || "Desconocido"));
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Error de conexión al subir la imagen");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
   const renderForm = () => {
     const config = TABLES[activeTab];
     if (config.isCustom) return null;
@@ -294,6 +338,38 @@ const Dashboard = () => {
                     <option key={opt} value={opt}>{opt}</option>
                   ))}
                 </select>
+              ) : field.type === 'image' ? (
+                <div className="image-upload-container">
+                  <div className="image-preview" style={{ marginBottom: '10px' }}>
+                    {formData[field.name] ? (
+                      <img src={formData[field.name]} alt="Preview" style={{width: '100%', maxHeight: '200px', objectFit: 'cover', borderRadius: '8px'}} />
+                    ) : (
+                      <div className="placeholder-img" style={{width: '100%', height: '100px', background: 'rgba(0,0,0,0.2)', border: '1px dashed #475569', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: '14px'}}>
+                        Sin Imagen
+                      </div>
+                    )}
+                  </div>
+                  <div className="image-inputs" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <label className="upload-btn" style={{ background: '#3b82f6', color: '#fff', padding: '8px 12px', borderRadius: '4px', cursor: 'pointer', textAlign: 'center' }}>
+                      {uploadingImage ? 'Subiendo...' : 'Seleccionar Archivo (Cloudinary)'}
+                      <input 
+                        type="file" 
+                        accept="image/*"
+                        onChange={(e) => handleImageUpload(e, field)}
+                        style={{ display: 'none' }}
+                        disabled={uploadingImage}
+                      />
+                    </label>
+                    <span style={{color: '#94a3b8', fontSize: '12px', textAlign: 'center'}}>O ingresa una URL:</span>
+                    <input 
+                      type="text" 
+                      placeholder="https://..."
+                      value={formData[field.name] || ''} 
+                      onChange={(e) => handleChange(e, field)}
+                      disabled={uploadingImage}
+                    />
+                  </div>
+                </div>
               ) : (
                 <input 
                   type={field.type} 
