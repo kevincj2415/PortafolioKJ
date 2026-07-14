@@ -73,8 +73,9 @@
 /* Contact Info Column */
 .contact-card {
   background: rgba(15, 10, 25, 0.4);
-  backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 20px;
   padding: 2.5rem;
@@ -166,8 +167,9 @@ a.contact-item-value:hover {
 /* Contact Form Column */
 .glass-form {
   background: rgba(15, 10, 25, 0.4);
-  backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 20px;
   padding: 2.5rem;

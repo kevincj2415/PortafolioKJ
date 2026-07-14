@@ -1,7 +1,16 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Briefcase, Send, MessageSquare } from 'lucide-react';
+import { neon } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-http';
+import * as schema from '../db/schema.js';
 import './Contactar.css';
+
+// Crear instancia de base de datos segura para el form público
+const getDb = () => {
+  const sql = neon(import.meta.env.VITE_DATABASE_URL);
+  return drizzle(sql);
+};
 
 const Contactar = ({ profile }) => {
   const [formData, setFormData] = useState({
@@ -12,6 +21,7 @@ const Contactar = ({ profile }) => {
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,21 +31,33 @@ const Contactar = ({ profile }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setIsError(false);
     
-    // Simulate an API call
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      const db = getDb();
+      await db.insert(schema.messages).values({
+        name: formData.name,
+        email: formData.email,
+        message: formData.message,
+        read: false
+      });
+      
       setIsSuccess(true);
       setFormData({ name: '', email: '', message: '' });
       
-      // Reset success message after 5 seconds
       setTimeout(() => {
         setIsSuccess(false);
       }, 5000);
-    }, 1500);
+    } catch (error) {
+      console.error("Error al enviar el mensaje:", error);
+      setIsError(true);
+      setTimeout(() => setIsError(false), 5000);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -180,13 +202,16 @@ const Contactar = ({ profile }) => {
               
               <button 
                 type="submit" 
-                className={`submit-btn ${isSubmitting ? 'submitting' : ''} ${isSuccess ? 'success' : ''}`}
+                className={`submit-btn ${isSubmitting ? 'submitting' : ''} ${isSuccess ? 'success' : ''} ${isError ? 'error-btn' : ''}`}
                 disabled={isSubmitting}
+                style={isError ? {background: '#ef4444'} : {}}
               >
                 {isSubmitting ? (
                   <span>Enviando...</span>
                 ) : isSuccess ? (
                   <span>¡Mensaje Enviado!</span>
+                ) : isError ? (
+                  <span>Error al Enviar</span>
                 ) : (
                   <>
                     <span>Enviar Mensaje</span>

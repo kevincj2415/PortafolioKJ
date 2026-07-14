@@ -10,8 +10,9 @@
 
 .id-card-glass.horizontal {
   background: rgba(20, 10, 5, 0.4);
-  backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  
   border: 1px solid rgba(249, 115, 22, 0.4);
   border-radius: 24px;
   width: 100%;

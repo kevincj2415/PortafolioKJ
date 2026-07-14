@@ -3,8 +3,9 @@
   width: 100vw;
   display: flex;
   background: transparent;
-  backdrop-filter: none;
   -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  
   position: relative;
   z-index: 100;
 }
@@ -12,8 +13,9 @@
 .dashboard-sidebar {
   width: 250px;
   background: rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  
   border-right: 1px solid rgba(6, 182, 212, 0.2);
   display: flex;
   flex-direction: column;

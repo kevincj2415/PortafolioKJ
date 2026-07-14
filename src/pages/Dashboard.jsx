@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, LayoutDashboard, Database, Settings, Edit2, Trash2, Plus, X, Save, Shield } from 'lucide-react';
+import { LogOut, LayoutDashboard, Database, Settings, Edit2, Trash2, Plus, X, Save, Shield, Mail } from 'lucide-react';
 import bcrypt from 'bcryptjs';
 import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
@@ -56,6 +56,18 @@ const TABLES = {
       { name: 'degree', label: 'Título', type: 'text' },
       { name: 'dateRange', label: 'Fechas', type: 'text' },
       { name: 'details', label: 'Detalles (Promedio, etc.)', type: 'textarea' }
+    ]
+  },
+  messages: {
+    label: 'Mensajes',
+    icon: <Mail size={18}/>,
+    singleRecord: false,
+    fields: [
+      { name: 'name', label: 'Nombre', type: 'text' },
+      { name: 'email', label: 'Email', type: 'email' },
+      { name: 'message', label: 'Mensaje', type: 'textarea' },
+      { name: 'read', label: 'Leído', type: 'checkbox' },
+      { name: 'createdAt', label: 'Fecha (Automática)', type: 'text', readOnly: true }
     ]
   },
   skills: {
@@ -370,11 +382,22 @@ const Dashboard = () => {
                     />
                   </div>
                 </div>
+              ) : field.type === 'checkbox' ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
+                  <input 
+                    type="checkbox" 
+                    checked={!!formData[field.name]} 
+                    onChange={(e) => setFormData({...formData, [field.name]: e.target.checked})}
+                    style={{ width: '20px', height: '20px' }}
+                  />
+                  <span>Sí (marcar casilla)</span>
+                </div>
               ) : (
                 <input 
                   type={field.type} 
                   value={formData[field.name] || ''} 
                   onChange={(e) => handleChange(e, field)}
+                  disabled={field.readOnly}
                   required={field.name !== 'details' && field.name !== 'imageUrl' && field.name !== 'githubUrl' && field.name !== 'webUrl'}
                 />
               )}
@@ -415,19 +438,31 @@ const Dashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {data.map(row => (
-                <tr key={row.id}>
-                  <td>#{row.id}</td>
-                  {config.fields.slice(0, 3).map(f => (
-                    <td key={f.name}>
-                      <span className="truncate-text">
-                        {Array.isArray(row[f.name]) ? row[f.name].length + ' items' : row[f.name]}
-                      </span>
+              {data.map(record => (
+                <tr key={record.id}>
+                  <td>#{record.id}</td>
+                  {config.fields.slice(0, 3).map(field => (
+                    <td key={field.name}>
+                      {field.type === 'checkbox' ? (
+                        record[field.name] ? (
+                          <span style={{ color: '#10b981', fontWeight: 'bold' }}>Sí (Leído)</span>
+                        ) : (
+                          <span style={{ color: '#f59e0b', fontWeight: 'bold' }}>No leído</span>
+                        )
+                      ) : field.name === 'createdAt' && record[field.name] ? (
+                        new Date(record[field.name]).toLocaleString('es-ES')
+                      ) : field.isArray ? (
+                        Array.isArray(record[field.name]) ? record[field.name].join(', ') : record[field.name]
+                      ) : typeof record[field.name] === 'object' ? (
+                        JSON.stringify(record[field.name])
+                      ) : (
+                        record[field.name]
+                      )}
                     </td>
                   ))}
                   <td className="actions-cell">
-                    <button className="icon-btn edit" onClick={() => handleEdit(row)} title="Editar"><Edit2 size={16}/></button>
-                    <button className="icon-btn delete" onClick={() => handleDelete(row.id)} title="Eliminar"><Trash2 size={16}/></button>
+                    <button className="icon-btn edit" onClick={() => handleEdit(record)} title="Editar"><Edit2 size={16}/></button>
+                    <button className="icon-btn delete" onClick={() => handleDelete(record.id)} title="Eliminar"><Trash2 size={16}/></button>
                   </td>
                 </tr>
               ))}

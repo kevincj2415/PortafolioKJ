@@ -1,4 +1,4 @@
-import { pgTable, serial, text, varchar, integer, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, varchar, integer, jsonb, boolean, timestamp } from "drizzle-orm/pg-core";
 
 // Perfil e información básica
 export const profile = pgTable("profile", {
@@ -62,4 +62,14 @@ export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: varchar("username", { length: 255 }).notNull().unique(),
   passwordHash: varchar("password_hash", { length: 255 }).notNull(),
+});
+
+// Mensajes de contacto
+export const messages = pgTable("messages", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  message: text("message").notNull(),
+  read: boolean("read").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
