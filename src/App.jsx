@@ -1,18 +1,16 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
-import { neon } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-http';
-import * as schema from './db/schema.js';
+import { useEffect, useState, useRef, useCallback, Suspense, lazy } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import Proyectos from './pages/Proyectos';
 import Contactar from './pages/Contactar';
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
 import MusicPlayer from './components/MusicPlayer';
 import './App.css';
 import './index.css';
+
+const Login = lazy(() => import('./pages/Login'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
 
 function App() {
   const [data, setData] = useState({ profile: null, experience: [], education: [], skills: [], courses: [], projects: [] });
@@ -65,29 +63,22 @@ function App() {
   useEffect(() => {
     async function loadData() {
       try {
-        if (!import.meta.env.VITE_DATABASE_URL) throw new Error("Missing VITE_DATABASE_URL");
-        const sql = neon(import.meta.env.VITE_DATABASE_URL);
-        const db = drizzle(sql, { schema });
-
-        const [p, e, edu, s, c, prj] = await Promise.all([
-          db.select().from(schema.profile),
-          db.select().from(schema.experience),
-          db.select().from(schema.education),
-          db.select().from(schema.skills),
-          db.select().from(schema.courses),
-          db.select().from(schema.projects)
+        const [dataRes, weatherRes] = await Promise.all([
+          fetch('/api/data'),
+          fetch('/api/weather')
         ]);
-
-        setData({ profile: p[0], experience: e, education: edu, skills: s, courses: c.sort((a, b) => b.year - a.year), projects: prj });
-
-        const apiKey = import.meta.env.VITE_OPENWEATHER_API;
-        if (apiKey) {
-          const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=Pereira,CO&appid=${apiKey}&units=metric&lang=es`);
-          const wData = await res.json();
-          if (wData.weather) setWeather(wData);
+        
+        if (dataRes.ok) {
+          const portfolioData = await dataRes.json();
+          setData(portfolioData);
+        }
+        
+        if (weatherRes.ok) {
+          const wData = await weatherRes.json();
+          setWeather(wData);
         }
       } catch (err) {
-        console.error("Error:", err);
+        console.error("Error fetching data:", err);
       }
     }
     loadData();
@@ -144,8 +135,16 @@ function App() {
         <Route path="/" element={<Home data={data} weather={weather} />} />
         <Route path="/proyectos" element={<Proyectos projects={data.projects} />} />
         <Route path="/contactar" element={<Contactar profile={data.profile} />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/login" element={
+          <Suspense fallback={<div className="loading-fallback">Cargando...</div>}>
+            <Login />
+          </Suspense>
+        } />
+        <Route path="/dashboard" element={
+          <Suspense fallback={<div className="loading-fallback">Cargando...</div>}>
+            <Dashboard profile={profile} />
+          </Suspense>
+        } />
       </Routes>
 
       {/* Footer Section */}

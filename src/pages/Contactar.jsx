@@ -1,16 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Briefcase, Send, MessageSquare } from 'lucide-react';
-import { neon } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-http';
-import * as schema from '../db/schema.js';
 import './Contactar.css';
-
-// Crear instancia de base de datos segura para el form público
-const getDb = () => {
-  const sql = neon(import.meta.env.VITE_DATABASE_URL);
-  return drizzle(sql);
-};
 
 const Contactar = ({ profile }) => {
   const [formData, setFormData] = useState({
@@ -37,13 +28,19 @@ const Contactar = ({ profile }) => {
     setIsError(false);
     
     try {
-      const db = getDb();
-      await db.insert(schema.messages).values({
-        name: formData.name,
-        email: formData.email,
-        message: formData.message,
-        read: false
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          message: formData.message
+        })
       });
+
+      if (!response.ok) {
+        throw new Error('Failed to send message');
+      }
       
       setIsSuccess(true);
       setFormData({ name: '', email: '', message: '' });
