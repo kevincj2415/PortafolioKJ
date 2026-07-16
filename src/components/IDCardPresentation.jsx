@@ -1,21 +1,16 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Link as LinkIcon, QrCode } from 'lucide-react';
-import useIsMobile from '../hooks/useIsMobile';
 import './IDCardPresentation.css';
 
 const IDCardPresentation = ({ profile, weather, imageUrl }) => {
-  const isMobile = useIsMobile();
-
-  const Wrapper = isMobile ? 'div' : motion.div;
-  const wrapperProps = isMobile ? {} : {
-    initial: { y: 50, opacity: 0, rotateX: 10 },
-    animate: { y: 0, opacity: 1, rotateX: 0 },
-    transition: { duration: 0.8, type: "spring", bounce: 0.4 },
-  };
-
   return (
-    <Wrapper className="id-card-container" {...wrapperProps}>
+    <motion.div
+      className="id-card-container"
+      initial={{ y: 50, opacity: 0, rotateX: 10 }}
+      animate={{ y: 0, opacity: 1, rotateX: 0 }}
+      transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
+    >
       <div className="id-card-glass horizontal">
         <div className="ambient-glow" />
 
@@ -68,7 +63,7 @@ const IDCardPresentation = ({ profile, weather, imageUrl }) => {
           </div>
         </div>
       </div>
-    </Wrapper>
+    </motion.div>
   );
 };
 
