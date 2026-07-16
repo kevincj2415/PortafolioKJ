@@ -1,0 +1,31 @@
+/* 
+  =========================================
+  URGENT MOBILE PERFORMANCE FIX
+  =========================================
+  Safari and mobile browsers struggle to render backdrop-filter: blur() 
+  over a playing video. It causes "clipping", "black squares", and "holes" 
+  when scrolling because the GPU cannot composite the blurred frames fast enough.
+  
+  This explicitly disables all backdrop-filters on mobile and uses a solid 
+  (but slightly transparent) fallback background to maintain contrast.
+*/
+@media (max-width: 768px) {
+  * {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+  
+  .glass-panel, 
+  .skill-card, 
+  .edu-card, 
+  .course-item, 
+  .id-card-glass, 
+  .contact-card, 
+  .glass-form, 
+  .glass-navbar, 
+  .footer-section, 
+  .project-card-glass,
+  .mobile-menu {
+    background-color: rgba(15, 10, 20, 0.95) !important;
+  }
+}
