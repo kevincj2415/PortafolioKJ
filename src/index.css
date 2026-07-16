@@ -340,6 +340,7 @@ p {
   overflow: hidden;
   pointer-events: none;
   opacity: 0.8;
+  background-color: var(--bg); /* Dark fallback while video loads */
 }
 
 .video-background video {
@@ -351,10 +352,23 @@ p {
   object-fit: cover;
   opacity: 0;
   transition: opacity 0.8s ease-in-out;
+  will-change: opacity;
 }
 
 .video-background video.active {
   opacity: 1;
+}
+
+/* --- GPU Acceleration & Content Optimization --- */
+.hardware-accelerated {
+  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+}
+
+.optimized-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
 }
 
 @media (max-width: 768px) {

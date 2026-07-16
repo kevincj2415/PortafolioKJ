@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
 import * as schema from './db/schema.js';
@@ -36,6 +36,12 @@ function App() {
   const vidProj = useRef(null);
   const vidCont = useRef(null);
   const vidSec = useRef(null);
+
+  // Track which videos have loaded enough data to display
+  const [videoReady, setVideoReady] = useState({});
+  const handleVideoReady = useCallback((key) => {
+    setVideoReady(prev => ({ ...prev, [key]: true }));
+  }, []);
 
   useEffect(() => {
     // Reproducir el video activo de inmediato
@@ -92,31 +98,39 @@ function App() {
   return (
     <main className="page-wrapper">
 
-      {/* Background Video - Preloaded for instant transitions */}
+      {/* Background Video - Only active video preloads, others deferred */}
       <div className="video-background">
         <video
           ref={vidMain}
           src={mainVideo}
+          preload={isMain ? 'auto' : 'none'}
           autoPlay loop muted playsInline
-          className={isMain ? 'active' : ''}
+          className={isMain && videoReady.main ? 'active' : ''}
+          onCanPlayThrough={() => handleVideoReady('main')}
         />
         <video
           ref={vidProj}
           src={projectsVideo}
+          preload={isProjects ? 'auto' : 'none'}
           autoPlay loop muted playsInline
-          className={isProjects ? 'active' : ''}
+          className={isProjects && videoReady.proj ? 'active' : ''}
+          onCanPlayThrough={() => handleVideoReady('proj')}
         />
         <video
           ref={vidCont}
           src={contactVideo}
+          preload={isContact ? 'auto' : 'none'}
           autoPlay loop muted playsInline
-          className={isContact ? 'active' : ''}
+          className={isContact && videoReady.cont ? 'active' : ''}
+          onCanPlayThrough={() => handleVideoReady('cont')}
         />
         <video
           ref={vidSec}
           src={secretVideo}
+          preload={isSecretPage ? 'auto' : 'none'}
           autoPlay loop muted playsInline
-          className={isSecretPage ? 'active' : ''}
+          className={isSecretPage && videoReady.sec ? 'active' : ''}
+          onCanPlayThrough={() => handleVideoReady('sec')}
         />
       </div>
 

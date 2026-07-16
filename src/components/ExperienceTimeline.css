@@ -73,6 +73,8 @@
 .timeline-node {
   position: relative;
   margin-bottom: 3.5rem;
+  /* GPU acceleration for scroll performance */
+  transform: translate3d(0, 0, 0);
 }
 
 .timeline-node:last-child {
@@ -129,6 +131,9 @@
   padding: 2rem;
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(192, 38, 211, 0.1);
   transition: transform 0.3s ease, border-color 0.3s ease;
+  /* GPU acceleration to prevent scroll jank on mobile */
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 }
 
 .glass-panel:hover {

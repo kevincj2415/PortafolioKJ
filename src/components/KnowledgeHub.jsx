@@ -9,14 +9,14 @@ const KnowledgeHub = ({ education, skills, courses }) => {
   const softSkills = skills.filter(s => s.category === 'Blanda');
 
   return (
-    <section id="conocimiento" className="knowledge-hub-section">
+    <section id="conocimiento" className="knowledge-hub-section optimized-section">
       <div className="knowledge-container">
         
         <motion.div 
-          className="section-header center"
+          className="section-header center hardware-accelerated"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
+          viewport={{ once: true, amount: 0 }}
         >
           <div className="header-icon-wrapper purple-glow">
             <BrainCircuit size={28} className="header-icon-purple" />
@@ -32,10 +32,10 @@ const KnowledgeHub = ({ education, skills, courses }) => {
             
             {techSkills.length > 0 && (
               <motion.div 
-                className="skill-card tech-card"
+                className="skill-card tech-card hardware-accelerated"
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, amount: 0 }}
               >
                 <div className="card-header">
                   <Cpu size={24} className="card-icon tech-icon"/>
@@ -53,11 +53,11 @@ const KnowledgeHub = ({ education, skills, courses }) => {
 
             {softSkills.length > 0 && (
               <motion.div 
-                className="skill-card soft-card"
+                className="skill-card soft-card hardware-accelerated"
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.1 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, amount: 0 }}
               >
                 <div className="card-header">
                   <Users size={24} className="card-icon soft-icon"/>
@@ -76,11 +76,11 @@ const KnowledgeHub = ({ education, skills, courses }) => {
 
             {langSkills.length > 0 && (
               <motion.div 
-                className="skill-card lang-card"
+                className="skill-card lang-card hardware-accelerated"
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, amount: 0 }}
               >
                 <div className="card-header">
                   <Globe size={24} className="card-icon lang-icon"/>
@@ -102,10 +102,10 @@ const KnowledgeHub = ({ education, skills, courses }) => {
           <div className="education-column">
             
             <motion.h3 
-              className="column-title"
+              className="column-title hardware-accelerated"
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, amount: 0 }}
             >
               <GraduationCap size={24} /> Educación Académica
             </motion.h3>
@@ -114,11 +114,11 @@ const KnowledgeHub = ({ education, skills, courses }) => {
               {education.map((ed, i) => (
                 <motion.div 
                   key={ed.id} 
-                  className="edu-card glass-panel"
+                  className="edu-card glass-panel hardware-accelerated"
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1 }}
-                  viewport={{ once: true }}
+                  viewport={{ once: true, amount: 0 }}
                 >
                   <div className="edu-glow"></div>
                   <span className="edu-date">{ed.dateRange}</span>
@@ -132,10 +132,10 @@ const KnowledgeHub = ({ education, skills, courses }) => {
             {courses.length > 0 && (
               <>
                 <motion.h3 
-                  className="column-title" style={{ marginTop: '3rem' }}
+                  className="column-title hardware-accelerated" style={{ marginTop: '3rem' }}
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
+                  viewport={{ once: true, amount: 0 }}
                 >
                   <Award size={24} /> Cursos y Certificaciones
                 </motion.h3>
@@ -144,11 +144,11 @@ const KnowledgeHub = ({ education, skills, courses }) => {
                   {courses.map((c, i) => (
                     <motion.div 
                       key={c.id} 
-                      className="course-item"
+                      className="course-item hardware-accelerated"
                       initial={{ opacity: 0, scale: 0.9 }}
                       whileInView={{ opacity: 1, scale: 1 }}
                       transition={{ delay: i * 0.05 }}
-                      viewport={{ once: true }}
+                      viewport={{ once: true, amount: 0 }}
                     >
                       <div className="course-title">{c.title}</div>
                       <div className="course-year">{c.year}</div>
