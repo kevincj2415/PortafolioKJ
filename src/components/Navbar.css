@@ -132,6 +132,7 @@
   padding: 1.5rem;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
   z-index: 999;
+  pointer-events: auto;
 }
 
 .mobile-nav-links {
