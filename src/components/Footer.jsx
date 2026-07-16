@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin, Link as LinkIcon, Code2, ChevronUp } from 'lucide-react';
 import './Footer.css';
 
@@ -8,7 +9,7 @@ const Footer = ({ profile }) => {
   };
 
   return (
-    <footer className="footer-section">
+    <footer className="footer-section optimized-section">
       <div className="footer-glow-line"></div>
       
       <div className="footer-container">
@@ -27,9 +28,9 @@ const Footer = ({ profile }) => {
             <div className="link-group">
               <h4>Navegación</h4>
               <ul>
-                <li><a href="#inicio">Inicio</a></li>
-                <li><a href="#experiencia">Trayectoria</a></li>
-                <li><a href="#conocimiento">Conocimiento</a></li>
+                <li><Link to="/">Inicio</Link></li>
+                <li><Link to="/proyectos">Proyectos</Link></li>
+                <li><Link to="/contactar">Contactar</Link></li>
               </ul>
             </div>
             
